@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 
@@ -11,7 +12,7 @@ const database = {
             id: '123',
             name: "john",
             email: "john@hotmail.com",
-            password: "cookies",
+            password: bcrypt.hashSync('cookies', 10),
             entries: 0,
             joined: new Date()
         },
@@ -19,7 +20,7 @@ const database = {
             id: '124',
             name: "sally",
             email: "sally@hotmail.com",
-            password: "bananas",
+            password: bcrypt.hashSync('bananas', 10),
             entries: 0,
             joined: new Date()
         }
@@ -32,7 +33,7 @@ app.get('/', (req, res) => {
 
 app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email &&
-        req.body.password === database.users[0].password) {
+        bcrypt.compareSync(req.body.password, database.users[0].password)) {
             res.json('Success');
     } else {
         res.status(400).json("Error Logging In");
@@ -41,11 +42,15 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const {email, password, name} = req.body;
+
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(password, salt);
+
     database.users.push({
         id: 125,
         name: name,
         email: email,
-        password: password,
+        password: hash,
         entries: 0,
         joined: new Date()
     })
