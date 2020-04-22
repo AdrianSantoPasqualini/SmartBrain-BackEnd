@@ -12,7 +12,7 @@ const database = {
     users: [
         {
             id: '123',
-            name: "john",
+            name: "John",
             email: "john@hotmail.com",
             password: "cookies",
             entries: 0,
@@ -20,7 +20,7 @@ const database = {
         },
         {
             id: '124',
-            name: "sally",
+            name: "Sally",
             email: "sally@hotmail.com",
             password: bcrypt.hashSync('bananas', 10),
             entries: 0,
@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password) {
-            res.json('Success');
+            res.json(database.users[0]);
     } else {
         res.status(400).json("Error Logging In");
     }
@@ -73,7 +73,7 @@ app.get('/profile/:id', (req, res) => {
     }
 });
 
-app.post('/image', (req, res) => {
+app.put('/image', (req, res) => {
     const { id } = req.body;
     let found = false;
     database.users.forEach(user => {
